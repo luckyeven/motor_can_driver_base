@@ -1,7 +1,7 @@
 #include "ctrl_motor.hpp"
 
 
-CtrlMotor::CtrlMotor(CAN_HandleTypeDef* _hcan, uint8_t _id, bool _inverse,
+CtrlMotor::CtrlMotor(CAN_TypeDefHD* _hcan, uint8_t _id, bool _inverse,
                              uint8_t _reduction, float _angleLimitMin, float _angleLimitMax) :
     nodeID(_id), hcan(_hcan), inverseDirection(_inverse), reduction(_reduction),
     angleLimitMin(_angleLimitMin), angleLimitMax(_angleLimitMax)
@@ -56,7 +56,7 @@ void CtrlMotor::SetPositionSetPoint(int32_t _val)
 }
 
 // TODO: implement this function
-void CtrlMotor::SetPositionWithVelocityLimit(int32_t _pos, int32_t _vel) /
+void CtrlMotor::SetPositionWithVelocityLimit(int32_t _pos, int32_t _vel) 
 {
    
 }

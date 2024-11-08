@@ -1,14 +1,16 @@
 #include "singlemotor.h"
 #include <chrono>
+#include "interface_can.hpp"
 
 SingleMotor motor(&hcan1);
 
+
 CAN_context* canCtx = get_can_ctx(&hcan1);
 /* Default Entry -------------------------------------------------------*/
-void Main(void)
+int main(void)
 {
     // Init all communication 
-    open_can();
+    CAN_TypeDefHD();
 
     // Init Robot.
     motor.Init();
@@ -41,5 +43,5 @@ void Main(void)
 
     printf("Total time taken: %f\n", duration.count());
     printf("Frame per second: %f\n", canCtx->received_msg_cnt / duration.count());
-    
+    return 0;
 }

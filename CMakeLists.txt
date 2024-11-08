@@ -2,26 +2,30 @@ cmake_minimum_required(VERSION 3.10)
 
 # Set the project name and version
 project(MyProject VERSION 1.0)
-
+set(CMAKE_BUILD_TYPE Debug)
 # Specify the C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Define the paths for the source and header files
 set(SOURCE_FILES
-    Example/main.cpp
+  
+
+
+    Utils/cancontrol/src/can.cpp
+    Bridge/communication/interface_can.cpp
     Robot/actuators/ctrl_motor.cpp
     Robot/instances/singlemotor.cpp
-    Bridge/interface_can.cpp
-    Utils/src/can.cpp
+    Example/main.cpp
 )
 
 set(HEADER_FILES
-    Bridge/interface_can.hpp
+    Bridge/communication/interface_can.hpp
     Robot/actuators/ctrl_motor.hpp
     Robot/instances/singlemotor.h
     Utils/cancontrol/include/can.hpp
     Utils/cancontrol/controlcan.h
+       
 )
 
 # Include the header directories
@@ -30,18 +34,20 @@ include_directories(
     Robot/actuators
     Robot/instances
     Utils/cancontrol/include
+    Utils/cancontrol
+    Bridge/communication
 )
 
 # Add the executable target
-add_executable(MyExecutable ${SOURCE_FILES} ${HEADER_FILES})
+add_executable(${PROJECT_NAME}_bin ${SOURCE_FILES} ${HEADER_FILES})
 
 # Link the shared library `libcontrolcan.so`
-target_link_libraries(MyExecutable PRIVATE
-    Utils/cancontrol/libcontrolcan.so
+
+target_link_libraries(${PROJECT_NAME}_bin ${CMAKE_SOURCE_DIR}/Utils/cancontrol/libcontrolcan.so pthread
 )
 
 # Optionally set the output directory for the executable
-set_target_properties(MyExecutable PROPERTIES
+set_target_properties(${PROJECT_NAME}_bin PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )
 

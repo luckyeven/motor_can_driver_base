@@ -2,8 +2,8 @@
 #define CTRL_MOTOR_HPP
 #include "controlcan.h"
 #include "can.hpp"
-
-
+#include "jetson_can.hpp"
+#include "interface_can.hpp"
 enum MotorCommands {
     // 获取类命令
     GET_OPERATION_MODE = 0x03,             // 获取电机运行模式
@@ -86,7 +86,7 @@ public:
 
     //const uint32_t CTRL_CIRCLE_COUNT = 200 * 256;
 
-    CtrlMotor(CAN_HandleTypeDef* _hcan, uint8_t _id, bool _inverse = false, uint8_t _reduction = 101,
+    CtrlMotor(CAN_TypeDefHD* _hcan, uint8_t _id, bool _inverse = false, uint8_t _reduction = 101,
                   float _angleLimitMin = -180, float _angleLimitMax = 180);
 
     UINT nodeID;
@@ -129,7 +129,7 @@ public:
   
 
 private:
-    CAN_HandleTypeDef* hcan;
+    CAN_TypeDefHD* hcan;
     BYTE canBuf[8] = {};
   
 };

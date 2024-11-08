@@ -1,26 +1,27 @@
 #include "interface_can.hpp"
-#include <semaphore.h>
+
 
 // defined in can.c
-extern CAN_HandleTypeDef hcan1; // can channel 1 handle
-extern CAN_HandleTypeDef hcan2; // can channel 2 handle
+extern CAN_TypeDefHD hcan1; // can channel 1 handle
+extern CAN_TypeDefHD hcan2; // can channel 2 handle
 
 CAN_context can1Ctx;
 CAN_context can2Ctx;
 static CAN_context *ctxs = nullptr;
-// static CAN_RxHeaderTypeDef headerRx;
+
 static BYTE data[8];
 
 sem_t sem_can1_tx;
 sem_t sem_can2_tx;
 
-struct CAN_context *get_can_ctx(CAN_HandleTypeDef *hcan)
+struct CAN_context *get_can_ctx(CAN_TypeDefHD *hcan)
 {
     if (hcan->dwCANInd == CAN_INDEX_1)
         return &can1Ctx;
     else if (hcan->dwCANInd == CAN_INDEX_2)
         return &can2Ctx;
     else
+        printf("falt");
         return nullptr;
 }
 
@@ -31,7 +32,7 @@ void StartCanDevice(void)
     open_can();
 }
 
-bool StartCanServer(CAN_HandleTypeDef *hcan)
+bool StartCanServer(CAN_TypeDefHD *hcan)
 {
     if (hcan->dwCANInd == CAN_INDEX_1)
     {
@@ -66,7 +67,7 @@ bool StartCanServer(CAN_HandleTypeDef *hcan)
     }
 }
 
-void tx_complete_callback(CAN_HandleTypeDef *hcan)
+void tx_complete_callback(CAN_TypeDefHD *hcan)
 {
     CAN_context *ctx = get_can_ctx(hcan);
     if (!ctx)
@@ -75,11 +76,11 @@ void tx_complete_callback(CAN_HandleTypeDef *hcan)
 
     if (hcan->dwCANInd == CAN_INDEX_1)
         sem_post(&sem_can1_tx);
-    else if (hcan->Instance == CAN2)
+    else if (hcan->dwCANInd == CAN_INDEX_2)
         sem_post(&sem_can2_tx);
 }
 
-void tx_aborted_callback(CAN_HandleTypeDef *hcan)
+void tx_aborted_callback(CAN_TypeDefHD *hcan)
 {
     if (!get_can_ctx(hcan))
         return;
@@ -91,28 +92,28 @@ void tx_error(CAN_context *ctx)
 {
 }
 
-void CAN_Fifo0FullCallback(CAN_HandleTypeDef *hcan)
+void CAN_Fifo0FullCallback(CAN_TypeDefHD *hcan)
 {
     if (get_can_ctx(hcan))
-        get_can_ctx(hcan)->RxFifo0FullCallbackCnt++;
+        get_can_ctx(hcan)->Fifo0FullCallbackCnt++;
 }
 
-void CAN_Fifo1MsgPendingCallback(CAN_HandleTypeDef *hcan)
+void CAN_Fifo1MsgPendingCallback(CAN_TypeDefHD *hcan)
 {
     if (get_can_ctx(hcan))
-        get_can_ctx(hcan)->RxFifo1MsgPendingCallbackCnt++;
+        get_can_ctx(hcan)->Fifo1MsgPendingCallbackCnt++;
 }
 
-void CAN_Fifo1FullCallback(CAN_HandleTypeDef *hcan)
+void CAN_Fifo1FullCallback(CAN_TypeDefHD *hcan)
 {
     if (get_can_ctx(hcan))
-        get_can_ctx(hcan)->RxFifo1FullCallbackCnt++;
+        get_can_ctx(hcan)->Fifo1FullCallbackCnt++;
 }
 
 /*
  * @brief  This function adds error counter when cananalizer detects an error
  */
-void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan)
+void CAN_ErrorCallback(CAN_TypeDefHD *hcan)
 {
     // TODO: implement this function
 }
@@ -120,13 +121,13 @@ void HAL_CAN_ErrorCallback(CAN_HandleTypeDef *hcan)
 void CanSendMessage(CAN_context *canCtx, BYTE *txData)
 {
     int semaphore_status;
-    if (canCtx->handle->Instance == CAN1)
+    if (canCtx->handle->dwCANInd ==  CAN_INDEX_1)
         semaphore_status = sem_wait(&sem_can1_tx);
-    else if (canCtx->handle->Instance == CAN2)
+    else if (canCtx->handle->dwCANInd ==  CAN_INDEX_2)
         semaphore_status = sem_wait(&sem_can2_tx);
     else
         return;
 
     if (semaphore_status == 0)
-        sendCanCommand(canCtx, txData);
+        sendCanCommand(canCtx, txData,tx_complete_callback);
 }

@@ -30,13 +30,9 @@
 #define TRUE 1
 #define FALSE 0
 
-// 句柄类型定义
-typedef struct _CanHandleTypeDef
-{
-	DWORD dwDeviceType;
-	DWORD dwDeviceInd;
-	DWORD dwCANInd;
-} CAN_HandleTypeDef;
+#define CAN_INDEX_1 0
+#define CAN_INDEX_2 1
+
 
 //1.ZLGCAN系列接口卡信息的数据类型。
 typedef  struct  _VCI_BOARD_INFO{

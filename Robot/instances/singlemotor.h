@@ -10,7 +10,7 @@
 class SingleMotor
 {
 public:
-    explicit SingleMotor(CAN_HandleTypeDef* _hcan);
+    explicit SingleMotor(CAN_TypeDefHD* _hcan);
     ~SingleMotor();
 
 
@@ -58,7 +58,7 @@ public:
   
 
 private:
-    CAN_HandleTypeDef* hcan;
+    CAN_TypeDefHD* hcan;
     float jointSpeed = DEFAULT_JOINT_SPEED;
     float jointSpeedRatio = 1;
   

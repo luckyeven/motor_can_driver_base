@@ -1,21 +1,10 @@
-/**
-  ******************************************************************************
-  * @file    can.cpp
-  * @brief   This file provides code for the configuration
-  *          of the CAN instances.
-  ******************************************************************************
 
-  */
-
-/* Includes ------------------------------------------------------------------*/
 #include "can.hpp"
 
-/* USER CODE BEGIN 0 */
 
-/* USER CODE END 0 */
+CAN_TypeDefHD hcan1 = {VCI_USBCAN2,0,CAN_INDEX_1};
+CAN_TypeDefHD hcan2 = {VCI_USBCAN2,0,CAN_INDEX_2};
 
-
-/* Init can device */
 
 void open_can(void)
 {
@@ -102,7 +91,9 @@ uint8_t CAN2_Init(void)
  * Above is an assumption due to the implementation of algorithm is invisible to us. But anyway try to avoid sending command lists is also  recommended by the official documentation.
  */
 
-void sendCanCommand(CAN_context *canCtx, BYTE *data)
+
+
+void sendCanCommand(CAN_context *canCtx, BYTE *data, tx_complete_Callback tx_complete_callback)
 {
 
     VCI_CAN_OBJ send;
@@ -147,11 +138,12 @@ void sendCanCommand(CAN_context *canCtx, BYTE *data)
     }
     else
     {
-        tx_abort_callback(canCtx->handle);
+        //tx_aborted_callback(canCtx->handle);
         // callback function
     }
 
     // callback function
+    //tx_complete_callback(canCtx->handle);
     tx_complete_callback(canCtx->handle);
 }
 
