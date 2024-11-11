@@ -2,23 +2,38 @@
 #include "can.hpp"
 
 
-CAN_TypeDefHD hcan1 = {VCI_USBCAN2,0,CAN_INDEX_1};
-CAN_TypeDefHD hcan2 = {VCI_USBCAN2,0,CAN_INDEX_2};
+CAN_TypeDefHD hcan1 ;
+CAN_TypeDefHD hcan2 ;
 
-
-void open_can(void)
+uint8_t open_can(void)
 {
     VCI_BOARD_INFO pInfo1[50];
-    int num = VCI_FindUsbDevice2(pInfo1);
-    std::cout << ">>USBCAN DEVICE NUM: " << num << " PCS" << std::endl;
-    DWORD dwRel = VCI_OpenDevice(DEVICE_TYPE, DEVICE_INDEX, 0);
-    if (dwRel != 1)
-    {
-        std::cout << "open-fail: " << dwRel << std::endl;
-    }
-    std::cout << "Open Success" << std::endl;
-}
+    int retry_count = 0;
+    const int max_retries = 10; 
 
+    while (retry_count < max_retries)
+    {
+        int num = VCI_FindUsbDevice2(pInfo1);
+        std::cout << ">>USBCAN DEVICE NUM: " << num << " PCS" << std::endl;
+        
+        DWORD dwRel = VCI_OpenDevice(DEVICE_TYPE, DEVICE_INDEX, 0);
+        if (dwRel == 1)
+        {
+            std::cout << "Open Success" << std::endl;
+            return STATUS_OK; // Exit if device opens successfully
+        }
+        else
+        {
+            std::cout << "open-fail: " << dwRel << " - Retrying in 1 second..." << std::endl;
+        }
+        
+        std::this_thread::sleep_for(std::chrono::seconds(1)); // Wait for 1 second before retrying
+        retry_count++;
+    }
+    
+    std::cout << "Failed to open device after 10 seconds. Exiting..." << std::endl;
+    return STATUS_ERR;
+}
 /* CAN1 init function */
 uint8_t CAN1_Init(void)
 {
@@ -76,6 +91,21 @@ uint8_t CAN2_Init(void)
     return STATUS_OK;
 }
 
+
+uint8_t close_device(){
+{
+
+	if(!VCI_ResetCAN(VCI_USBCAN2, 0, 0))return STATUS_ERR;//复位CAN1通道。
+	
+	if(!VCI_ResetCAN(VCI_USBCAN2, 0, 1))return STATUS_ERR;//复位CAN2通道。
+	
+	if(!VCI_CloseDevice(VCI_USBCAN2,0)) return STATUS_ERR;//关闭设备。
+	return STATUS_OK;// temperory retur. 
+
+}
+
+} 
+
 /*
  * Send a single CAN command
  * @param canIdList: list of CAN IDs
@@ -93,7 +123,7 @@ uint8_t CAN2_Init(void)
 
 
 
-void sendCanCommand(CAN_context *canCtx, BYTE *data, tx_complete_Callback tx_complete_callback)
+void sendCanCommand(CAN_context *canCtx, BYTE *data, tx_complete_Callback tx_complete_callback, tx_aborted_Callback tx_aborted_callback)
 {
 
     VCI_CAN_OBJ send;
@@ -106,13 +136,13 @@ void sendCanCommand(CAN_context *canCtx, BYTE *data, tx_complete_Callback tx_com
     send.Data[0] = data[0];
     // std::cout << "ID:" << send[i].ID << " Command Send: " << send[i].Data[0] << parameterList[i] << std::endl;
 
-    // TODO: phrase the data in application level.
+    // TODO: phrase the data in application level.(done)
 
     // int res[4];
     // toIntArray(data, res, 4);
     for (int para_seg = 1; para_seg < canCtx->DataLen; para_seg++)
     {
-        send.Data[para_seg] = data[para_seg - 1];
+        send.Data[para_seg] = data[para_seg ];
     }
 
     DWORD rel;
@@ -135,16 +165,18 @@ void sendCanCommand(CAN_context *canCtx, BYTE *data, tx_complete_Callback tx_com
             }
             printf("\n");
         }
+        tx_complete_callback(canCtx->handle);
     }
     else
     {
         //tx_aborted_callback(canCtx->handle);
         // callback function
+
+        tx_aborted_callback(canCtx->handle);
     }
 
     // callback function
-    //tx_complete_callback(canCtx->handle);
-    tx_complete_callback(canCtx->handle);
+    
 }
 
 

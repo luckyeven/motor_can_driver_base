@@ -86,7 +86,7 @@ public:
 
     //const uint32_t CTRL_CIRCLE_COUNT = 200 * 256;
 
-    CtrlMotor(CAN_TypeDefHD* _hcan, uint8_t _id, bool _inverse = false, uint8_t _reduction = 101,
+    CtrlMotor(CAN_TypeDefHD* _hcan, UINT _id, bool _inverse = false, uint8_t _reduction = 101,
                   float _angleLimitMin = -180, float _angleLimitMax = 180);
 
     UINT nodeID;
@@ -130,6 +130,7 @@ public:
 
 private:
     CAN_TypeDefHD* hcan;
+    CAN_context* ctx;
     BYTE canBuf[8] = {};
   
 };

@@ -15,6 +15,8 @@
 #include "controlcan.h"
 #include <iostream>
 #include <functional>
+#include <chrono>
+#include <thread>
 //#include "interface_can.hpp"
 
 /* USER CODE BEGIN Includes */
@@ -32,11 +34,13 @@ extern CAN_TypeDefHD hcan2;
 /* USER CODE BEGIN Private defines */
 
 using tx_complete_Callback = std::function<void(CAN_TypeDefHD*)>;
+using tx_aborted_Callback = std::function<void(CAN_TypeDefHD*)>;
 /* USER CODE END Private defines */
-void open_can(void);
+uint8_t open_can(void);
 uint8_t CAN1_Init(void);
 uint8_t CAN2_Init(void);
-void sendCanCommand(CAN_context *canCtx, BYTE *data, tx_complete_Callback tx_complete_callback);
+void sendCanCommand(CAN_context *canCtx, BYTE *data, tx_complete_Callback tx_complete_callback, tx_aborted_Callback tx_aborted_callback);
+uint8_t close_device(void);
 /* USER CODE BEGIN Prototypes */
 
 /* USER CODE END Prototypes */

@@ -1,6 +1,5 @@
 #include "interface_can.hpp"
 
-
 // defined in can.c
 extern CAN_TypeDefHD hcan1; // can channel 1 handle
 extern CAN_TypeDefHD hcan2; // can channel 2 handle
@@ -22,14 +21,18 @@ struct CAN_context *get_can_ctx(CAN_TypeDefHD *hcan)
         return &can2Ctx;
     else
         printf("falt");
-        return nullptr;
+    return nullptr;
 }
 
 // Start the Can Device
 
-void StartCanDevice(void)
+bool StartCanDevice(void)
 {
-    open_can();
+    if (!open_can())
+    {
+        return false;
+    }
+    return true;
 }
 
 bool StartCanServer(CAN_TypeDefHD *hcan)
@@ -38,6 +41,7 @@ bool StartCanServer(CAN_TypeDefHD *hcan)
     {
         ctxs = &can1Ctx;
         ctxs->handle = &hcan1;
+        // printf("motor id: %d \n", ctxs);
         sem_init(&sem_can1_tx, 0, 1);
     }
     else if (hcan->dwCANInd == CAN_INDEX_2)
@@ -49,7 +53,7 @@ bool StartCanServer(CAN_TypeDefHD *hcan)
     else
         return false; // fail if none of the above checks matched
 
-    ctxs->node_id = 0;
+    // ctxs->node_id = 0;
 
     if (ctxs->handle == &hcan1)
     {
@@ -72,7 +76,7 @@ void tx_complete_callback(CAN_TypeDefHD *hcan)
     CAN_context *ctx = get_can_ctx(hcan);
     if (!ctx)
         return;
-    ctx->tx_msg_cnt++;
+    ctx->TxCompleteCallbackCnt++;
 
     if (hcan->dwCANInd == CAN_INDEX_1)
         sem_post(&sem_can1_tx);
@@ -84,7 +88,7 @@ void tx_aborted_callback(CAN_TypeDefHD *hcan)
 {
     if (!get_can_ctx(hcan))
         return;
-    get_can_ctx(hcan)->TxMailboxAbortCallbackCnt++;
+    get_can_ctx(hcan)->TxAbortCallbackCnt++;
 }
 
 // TODO: implement this function
@@ -120,14 +124,16 @@ void CAN_ErrorCallback(CAN_TypeDefHD *hcan)
 
 void CanSendMessage(CAN_context *canCtx, BYTE *txData)
 {
+    printf("id: %d \n", canCtx->node_id);
+
     int semaphore_status;
-    if (canCtx->handle->dwCANInd ==  CAN_INDEX_1)
+    if (canCtx->handle->dwCANInd == CAN_INDEX_1)
         semaphore_status = sem_wait(&sem_can1_tx);
-    else if (canCtx->handle->dwCANInd ==  CAN_INDEX_2)
+    else if (canCtx->handle->dwCANInd == CAN_INDEX_2)
         semaphore_status = sem_wait(&sem_can2_tx);
     else
         return;
 
     if (semaphore_status == 0)
-        sendCanCommand(canCtx, txData,tx_complete_callback);
+        sendCanCommand(canCtx, txData, tx_complete_callback, tx_aborted_callback);
 }

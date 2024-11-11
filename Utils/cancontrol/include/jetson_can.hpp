@@ -29,7 +29,7 @@ struct CAN_context
     int Fifo0FullCallbackCnt = 0;
     int Fifo1MsgPendingCallbackCnt = 0;
     int Fifo1FullCallbackCnt = 0;
-    int TxMailboxAbortCallbackCnt = 0;
+
     int ErrorCallbackCnt = 0;
 
     uint32_t received_msg_cnt = 0;
