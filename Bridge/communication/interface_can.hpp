@@ -10,7 +10,7 @@
 struct CAN_context *get_can_ctx(CAN_TypeDefHD *hcan);
 bool StartCanDevice(void);
 bool StartCanServer(CAN_TypeDefHD *hcan);
-void CanSendMessage(CAN_context *canCtx, BYTE *txData);
+void CanSendMessage(CAN_context *canCtx, BYTE *txData, header_textdef* txHeader);
 
 // callback functions
 void tx_complete_callback(CAN_TypeDefHD *hcan);       // use this to calculate canBus receive rate

@@ -123,7 +123,7 @@ uint8_t close_device(){
 
 
 
-void sendCanCommand(CAN_context *canCtx, BYTE *data, tx_complete_Callback tx_complete_callback, tx_aborted_Callback tx_aborted_callback)
+void sendCanCommand(CAN_context *canCtx, BYTE *data, header_textdef* txHeader, tx_complete_Callback tx_complete_callback, tx_aborted_Callback tx_aborted_callback)
 {
 
     VCI_CAN_OBJ send;
@@ -132,7 +132,7 @@ void sendCanCommand(CAN_context *canCtx, BYTE *data, tx_complete_Callback tx_com
     send.RemoteFlag = 0;
     send.ExternFlag = 0;
     send.DataLen = canCtx->DataLen;
-    send.ID = canCtx->node_id;
+    send.ID = txHeader->motorId;
     send.Data[0] = data[0];
     // std::cout << "ID:" << send[i].ID << " Command Send: " << send[i].Data[0] << parameterList[i] << std::endl;
 

@@ -1,9 +1,9 @@
-#include "prototype_robot.h"
+#include "singlemotor.h"
 #include <chrono>
 #include "interface_can.hpp"
 
 
-PrototypeRobot robot(&hcan1) ;
+SingleMotor motor(&hcan1) ;
 
 
 CAN_context* canCtx = get_can_ctx(&hcan1);
@@ -16,48 +16,41 @@ int main(void)
     CAN_TypeDefHD();
 
     // Init Robot.
-    robot.Init();
+    motor.Init();
 
  // Start measuring time
     auto start = std::chrono::high_resolution_clock::now();
     
-    int32_t angles[7] = {0};
 
 
     // move to zero position
-    robot.MoveJoints(angles);
+    motor.MoveJoint(-360);
 
 
     for(int loop = 0; loop < 10;loop++){
      //std::this_thread::sleep_for(std::chrono::milliseconds(3)); 
-        for (int i = -360; i < 360; i++)
-        {       
-            for(int j = 0; j < 7;j++){
-              angles[j] = i;  
-            }
-              robot.MoveJoints(angles);  
+        for (int i = -360; i < 3600; i++)
+        {
+                motor.MoveJoint(i);
       //          std::this_thread::sleep_for(std::chrono::milliseconds(3));
         }
         // backward rotation
       //    std::this_thread::sleep_for(std::chrono::milliseconds(3)); 
         for (int i = 360; i > -360; i--)
         {
-            for(int j = 0; j < 7;j++){
-              angles[j] = i;  
-            }
-              robot.MoveJoints(angles);  
+            motor.MoveJoint(i);
        //     std::this_thread::sleep_for(std::chrono::milliseconds(3));       
         }
     }
-    //         robot.MoveJoint(0);
+    //         motor.MoveJoint(0);
     //   std::this_thread::sleep_for(std::chrono::milliseconds(4000));  
-    // robot.MoveJoint(90);
+    // motor.MoveJoint(90);
     //   std::this_thread::sleep_for(std::chrono::milliseconds(4000));  
-    // robot.MoveJoint(180);
+    // motor.MoveJoint(180);
     //   std::this_thread::sleep_for(std::chrono::milliseconds(4000));  
-    // robot.MoveJoint(270);
+    // motor.MoveJoint(270);
     //       std::this_thread::sleep_for(std::chrono::milliseconds(4000));  
-    //         robot.MoveJoint(0);
+    //         motor.MoveJoint(0);
     //   std::this_thread::sleep_for(std::chrono::milliseconds(4000));  
     //}
 
@@ -70,7 +63,7 @@ int main(void)
     printf("Frame per second: %f\n", canCtx->TxCompleteCallbackCnt / duration.count());
 
     //printf("xxxxxxxxxxxx");
-    //printf("robotid: %u\n", canCtx->node_id);
+    //printf("motorid: %u\n", canCtx->node_id);
     return 0;
 
 }

@@ -91,23 +91,23 @@ void tx_aborted_callback(CAN_TypeDefHD *hcan)
     get_can_ctx(hcan)->TxAbortCallbackCnt++;
 }
 
-// TODO: implement this function
+// TODO: reserved function
 void tx_error(CAN_context *ctx)
 {
 }
-
+// TODO: reserved function
 void CAN_Fifo0FullCallback(CAN_TypeDefHD *hcan)
 {
     if (get_can_ctx(hcan))
         get_can_ctx(hcan)->Fifo0FullCallbackCnt++;
 }
-
+// TODO: reserved function
 void CAN_Fifo1MsgPendingCallback(CAN_TypeDefHD *hcan)
 {
     if (get_can_ctx(hcan))
         get_can_ctx(hcan)->Fifo1MsgPendingCallbackCnt++;
 }
-
+// TODO: reserved function
 void CAN_Fifo1FullCallback(CAN_TypeDefHD *hcan)
 {
     if (get_can_ctx(hcan))
@@ -119,12 +119,11 @@ void CAN_Fifo1FullCallback(CAN_TypeDefHD *hcan)
  */
 void CAN_ErrorCallback(CAN_TypeDefHD *hcan)
 {
-    // TODO: implement this function
+    // TODO: reserved function
 }
 
-void CanSendMessage(CAN_context *canCtx, BYTE *txData)
+void CanSendMessage(CAN_context *canCtx, BYTE *txData, header_textdef *txHeader)
 {
-    printf("id: %d \n", canCtx->node_id);
 
     int semaphore_status;
     if (canCtx->handle->dwCANInd == CAN_INDEX_1)
@@ -135,5 +134,5 @@ void CanSendMessage(CAN_context *canCtx, BYTE *txData)
         return;
 
     if (semaphore_status == 0)
-        sendCanCommand(canCtx, txData, tx_complete_callback, tx_aborted_callback);
+        sendCanCommand(canCtx, txData, txHeader, tx_complete_callback, tx_aborted_callback);
 }

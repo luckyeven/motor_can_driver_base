@@ -2,7 +2,7 @@
 #define CTRL_MOTOR_HPP
 #include "controlcan.h"
 #include "can.hpp"
-#include "jetson_can.hpp"
+//#include "jetson_can.hpp"
 #include "interface_can.hpp"
 enum MotorCommands {
     // 获取类命令
@@ -73,6 +73,7 @@ enum MotorCommands {
     SET_BAUD_RATE = 0x3F,                  // 设置波特率
 };
 
+
 class CtrlMotor
 {
 public:
@@ -132,6 +133,7 @@ private:
     CAN_TypeDefHD* hcan;
     CAN_context* ctx;
     BYTE canBuf[8] = {};
+    header_textdef txHeader={};
   
 };
 

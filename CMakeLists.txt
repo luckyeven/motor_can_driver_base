@@ -16,6 +16,7 @@ set(SOURCE_FILES
     Bridge/communication/interface_can.cpp
     Robot/actuators/ctrl_motor.cpp
     Robot/instances/singlemotor.cpp
+    Robot/instances/prototype_robot.cpp
     Example/main.cpp
 )
 
@@ -23,6 +24,7 @@ set(HEADER_FILES
     Bridge/communication/interface_can.hpp
     Robot/actuators/ctrl_motor.hpp
     Robot/instances/singlemotor.h
+    Robot/instances/prototype_robot.h
     Utils/cancontrol/include/can.hpp
     Utils/cancontrol/controlcan.h
        

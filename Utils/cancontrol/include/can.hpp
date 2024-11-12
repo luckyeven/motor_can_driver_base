@@ -39,7 +39,7 @@ using tx_aborted_Callback = std::function<void(CAN_TypeDefHD*)>;
 uint8_t open_can(void);
 uint8_t CAN1_Init(void);
 uint8_t CAN2_Init(void);
-void sendCanCommand(CAN_context *canCtx, BYTE *data, tx_complete_Callback tx_complete_callback, tx_aborted_Callback tx_aborted_callback);
+void sendCanCommand(CAN_context *canCtx, BYTE *data, header_textdef* txHeader ,tx_complete_Callback tx_complete_callback, tx_aborted_Callback tx_aborted_callback);
 uint8_t close_device(void);
 /* USER CODE BEGIN Prototypes */
 

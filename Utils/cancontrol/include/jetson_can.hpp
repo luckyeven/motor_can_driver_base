@@ -37,5 +37,8 @@ struct CAN_context
     uint32_t unexpected_errors = 0;
     uint32_t unhandled_messages = 0;
 };
+typedef struct {
+    UINT motorId;
+}header_textdef;
 
 #endif
