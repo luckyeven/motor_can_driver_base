@@ -38,6 +38,7 @@ include_directories(
     Utils/cancontrol/include
     Utils/cancontrol
     Bridge/communication
+    Robot/algorithms/kinematic
 )
 
 # Add the executable target

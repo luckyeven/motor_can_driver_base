@@ -8,13 +8,13 @@
 
 PrototypeRobot::PrototypeRobot(CAN_TypeDefHD *_hcan) : hcan(_hcan)
 {
-    motorJ[0] = new CtrlMotor(_hcan, 0, false, 101, -180, 180);
-    motorJ[1] = new CtrlMotor(_hcan, 1, true, 101, -180, 180);
-    motorJ[2] = new CtrlMotor(_hcan, 2, false, 101, -180, 180);
-    motorJ[3] = new CtrlMotor(_hcan, 3, true, 101, -180, 180);
-    motorJ[4] = new CtrlMotor(_hcan, 14, false, 101, -180, 180);
-    motorJ[5] = new CtrlMotor(_hcan, 5, true, 101, -180, 180);
-    motorJ[6] = new CtrlMotor(_hcan, 6, true, 101, -180, 180);
+    motorJ[0] = new CtrlMotor(_hcan, 16, false, 101, -180, 180);
+    motorJ[1] = new CtrlMotor(_hcan, 17, false, 101, -180, 180);
+    motorJ[2] = new CtrlMotor(_hcan, 18, false, 101, -180, 180);
+    motorJ[3] = new CtrlMotor(_hcan, 19, true, 101, -180, 180);
+    motorJ[4] = new CtrlMotor(_hcan, 20, false, 101, -180, 180);
+    motorJ[5] = new CtrlMotor(_hcan, 21, false, 101, -180, 180);
+    motorJ[6] = new CtrlMotor(_hcan, 22, false, 101, -180, 180);
 }
 
 PrototypeRobot::~PrototypeRobot()
@@ -44,7 +44,7 @@ void PrototypeRobot::Init()
 }
 
 void PrototypeRobot::Reboot()
-{   
+{
     // TODO: reserved function
     // motorJ->Reboot();
 }

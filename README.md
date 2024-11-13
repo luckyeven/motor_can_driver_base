@@ -1,2 +1,2 @@
-# ti5motor Canbus control library
+# studious-memory
 Providing an open-source solution for communicating with motors via the CAN protocol.
